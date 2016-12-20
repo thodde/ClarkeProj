@@ -7,6 +7,8 @@ public class Application {
         WarehouseManager manager = new WarehouseManager();
         manager.createEmptyWarehouse();
         manager.generateInventory();
+        manager.fillWarehouse();
+        //manager.displaySpaces();
         manager.displayInventory();
     }
 }

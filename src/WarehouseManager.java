@@ -15,7 +15,22 @@ public class WarehouseManager {
     
     // TODO: determine how to set each InventoryItem.location 
     public void fillWarehouse() {
-        
+        for(InventoryItem item : inventory) {
+            for(WarehouseSpace space : warehouse) {
+                if(!space.isFilled()) {
+                    // do I need to calculate more square footage here?
+                    if(item.getTotalSquareFootage() <= space.getSquareFootage()) {
+                        space.setFilled(true);
+                        item.setLocation(space);
+                        break;
+                    }
+                    else {
+                        // we have work to do --
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     // generate all the empty spaces in the warehouse

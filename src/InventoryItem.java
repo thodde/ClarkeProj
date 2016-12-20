@@ -66,6 +66,8 @@ public class InventoryItem {
      * @return the totalSquareFootage
      */
     public double getTotalSquareFootage() {
+        // based on the total number of units * each units size
+        totalSquareFootage = this.inventoryCount * (this.length*this.width);
         return totalSquareFootage;
     }
     
