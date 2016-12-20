@@ -8,7 +8,8 @@ public class Application {
         manager.createEmptyWarehouse();
         manager.generateInventory();
         manager.fillWarehouse();
-        //manager.displaySpaces();
-        manager.displayInventory();
+        manager.updateInventory();
+        manager.displayInventory(true); 
+        //manager.writeCSVFile();
     }
 }

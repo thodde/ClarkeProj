@@ -8,6 +8,7 @@ public class InventoryItem {
     private double totalSquareFootage;
     private int maxStackSize;
     private int inventoryCount;
+    private int currentStack;
     private WarehouseSpace location;
     
     //private final double MAX_HEIGHT = 100; // total possible height of stack in inches
@@ -18,6 +19,7 @@ public class InventoryItem {
         this.length = length;
         this.maxStackSize = maxStackSize;
         this.inventoryCount = inventoryCount;
+        currentStack = 0;
     }
     
     /**
@@ -92,6 +94,14 @@ public class InventoryItem {
         this.maxStackSize = maxStackSize;
     }
     
+    public int getCurrentStackSize() {
+        return this.currentStack;
+    }
+    
+    public void setCurrentStackSize(int size) {
+        this.currentStack = size;
+    }
+    
     /**
      * @return the inventoryCount
      */
@@ -124,6 +134,10 @@ public class InventoryItem {
     public String toString() {
         return "InventoryItem [" + (itemName != null ? "itemName=" + itemName + ", " : "") + "width=" + width + ", length=" + length
                 + ", inventoryCount=" + inventoryCount + ", " + (location != null ? "location=" + location : "") + "]";
+    }
+    
+    public String prettyPrint() {
+        return (itemName != null ? itemName + ", " : "") + inventoryCount + ", " + (location != null ? location.getLocation() : "");
     }
     
 /*
