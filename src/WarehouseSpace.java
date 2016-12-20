@@ -7,6 +7,8 @@ public class WarehouseSpace {
     private double width;
     private double length;
     private double squareFootage;
+    private double remainingSpace;
+    private double capacity;
 
     /**
      * @param filled
@@ -22,6 +24,7 @@ public class WarehouseSpace {
         this.width = width;
         this.length = length;
         this.squareFootage = length*width;
+        this.remainingSpace = squareFootage;
     }
     
     /**
@@ -84,7 +87,8 @@ public class WarehouseSpace {
      * @return the squareFootage
      */
     public double getSquareFootage() {
-        return this.squareFootage;
+        // return the remaining space 
+        return this.remainingSpace;
     }
     
     /**
@@ -92,6 +96,20 @@ public class WarehouseSpace {
      */
     public void setSquareFootage(double squareFootage) {
         this.squareFootage = squareFootage;
+    }
+    
+    /**
+     * @return the remaining space for this spot
+     */
+    public double calcRemainingFootage(double filledSpace) {
+        this.remainingSpace -= filledSpace;
+        return this.remainingSpace;
+    }
+    
+    // return the available capacity of the space
+    public double calcCapacity() {
+        capacity = (squareFootage - remainingSpace) / squareFootage;
+        return capacity;
     }
     
     @Override
