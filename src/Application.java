@@ -10,6 +10,6 @@ public class Application {
         manager.fillWarehouse();
         manager.updateInventory();
         manager.displayInventory(true); 
-        //manager.writeCSVFile();
+        manager.writeCSVFile();
     }
 }

@@ -12,6 +12,8 @@ public class WarehouseManager {
     private ArrayList<InventoryItem> inventory = new ArrayList<InventoryItem>();
     private ArrayList<WarehouseSpace> warehouse = new ArrayList<WarehouseSpace>();
     
+    private final double MAX_CAPACITY = 0.7;
+    
     // managing file IO
     private final String WAREHOUSE_LOT_SPACES_FILENAME = "Warehouse_Lot_Spaces.csv";
     private final String ITEM_REQUIREMENTS_FILENAME = "Item_Requirements.csv";
@@ -54,7 +56,7 @@ public class WarehouseManager {
                             space.calcRemainingFootage(item.getTotalSquareFootage());
                         }
                         
-                        if(space.calcCapacity() >= 0.7) {
+                        if(space.calcCapacity() >= MAX_CAPACITY) {
                             space.setFilled(true);
                         }
                         
@@ -187,6 +189,7 @@ public class WarehouseManager {
         try {
             fileWriter = new FileWriter(OUTFILE);
             fileWriter.append(FILE_HEADER);
+            fileWriter.append("\n");
             
             for(InventoryItem i : inventory) {
                 fileWriter.append(i.prettyPrint());
