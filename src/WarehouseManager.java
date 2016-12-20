@@ -32,17 +32,22 @@ public class WarehouseManager {
                     if(item.getTotalSquareFootage() <= space.getSquareFootage()) {
                         // try to stack vertically
                         if(item.getCurrentStackSize() < item.getMaxStackSize()) {
-                            for(int i = item.getCurrentStackSize(); i < item.getMaxStackSize() && i < item.getInventoryCount(); i++) {
+                            for(int i = item.getCurrentStackSize(); i <= item.getMaxStackSize() && i <= item.getInventoryCount(); i++) {
                                 //item can be stacked
                                 item.setCurrentStackSize(i);
                             }
                             //update remaining inventory count and create a new item for the remaining stuff
-                            iter.add(new InventoryItem(item.getItemName(), item.getMaxStackSize(), 
-                                        item.getWidth(), item.getLength(), (item.getInventoryCount()-item.getCurrentStackSize())));
+                            InventoryItem extraItem = new InventoryItem(item.getItemName(), item.getMaxStackSize(), 
+                                    item.getWidth(), item.getLength(), (item.getInventoryCount()-item.getCurrentStackSize()));
+                            iter.add(extraItem);
                             // the current item is stacked
                             item.setInventoryCount(item.getCurrentStackSize());
                             item.setTotalSquareFootage(item.getLength()*item.getWidth());
                             space.calcRemainingFootage(item.getLength()*item.getWidth());
+                            
+                            if(extraItem.getTotalSquareFootage() < space.getSquareFootage()) {
+                                extraItem.setLocation(space);
+                            }
                         }
                         else {
                             // update the remaining space
@@ -85,6 +90,7 @@ public class WarehouseManager {
                     }
                 }
             }
+            iter = inventory.listIterator();
         }
     }
     
