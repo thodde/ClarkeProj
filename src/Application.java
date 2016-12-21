@@ -9,6 +9,7 @@ public class Application {
         manager.generateInventory();
         manager.fillWarehouse();
         manager.updateInventory();
+        manager.consolidateData();
         manager.displayInventory(true); 
         manager.writeCSVFile();
     }

@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ListIterator;
 
 /**
@@ -12,7 +13,7 @@ public class WarehouseManager {
     private ArrayList<InventoryItem> inventory = new ArrayList<InventoryItem>();
     private ArrayList<WarehouseSpace> warehouse = new ArrayList<WarehouseSpace>();
     
-    private final double MAX_CAPACITY = 0.7;
+    private final double MAX_CAPACITY = 0.75;
     
     // managing file IO
     private final String WAREHOUSE_LOT_SPACES_FILENAME = "Warehouse_Lot_Spaces.csv";
@@ -23,13 +24,16 @@ public class WarehouseManager {
     public void fillWarehouse() {
         ListIterator<InventoryItem> iter = inventory.listIterator();
         InventoryItem item;
+        boolean possiblyFull = false;
         while(iter.hasNext()) {
             item = iter.next();
+            possiblyFull = true;
             if(item.getLocation() != null)
                 continue;
             
             for(WarehouseSpace space : warehouse) {
                 if(!space.isFilled()) {
+                    possiblyFull = false;
                     // if the item (total inventory) fits in the space
                     if(item.getTotalSquareFootage() <= space.getSquareFootage()) {
                         // try to stack vertically
@@ -46,7 +50,7 @@ public class WarehouseManager {
                             item.setInventoryCount(item.getCurrentStackSize());
                             item.setTotalSquareFootage(item.getLength()*item.getWidth());
                             space.calcRemainingFootage(item.getLength()*item.getWidth());
-                            
+                                                        
                             if(extraItem.getTotalSquareFootage() < space.getSquareFootage()) {
                                 extraItem.setLocation(space);
                             }
@@ -83,7 +87,7 @@ public class WarehouseManager {
                         
                         // update the remaining space
                         space.calcRemainingFootage(item.getTotalSquareFootage());
-                        if(space.calcCapacity() >= 0.7) {
+                        if(space.calcCapacity() >= MAX_CAPACITY) {
                             space.setFilled(true);
                         }
                         // the item has a home
@@ -92,7 +96,19 @@ public class WarehouseManager {
                     }
                 }
             }
+            if(possiblyFull)
+                break;
             iter = inventory.listIterator();
+        }
+        
+        for(WarehouseSpace w : warehouse) {
+            if(!w.isFilled()) {
+                possiblyFull = false;
+            }
+        }
+        if(possiblyFull) {
+            System.out.println("The warehouse is full. Cannot place any more items.");
+            System.out.println("Displaying partial results.");
         }
     }
     
@@ -105,6 +121,22 @@ public class WarehouseManager {
                 iter.remove();
             }
         }
+    }
+    
+    // once the work is done, iterate over the list and consolidate the inventory count
+    // of the items that share a name
+    public void consolidateData() {
+        ArrayList<InventoryItem> mergedList = new ArrayList<InventoryItem>();
+
+        for(InventoryItem item : inventory) {
+            int index = mergedList.indexOf(item);
+            if(index != -1) {
+                mergedList.set(index, mergedList.get(index).merge(item));
+            } else {
+                mergedList.add(item);
+            }
+        }
+        inventory = mergedList;
     }
 
     // generate all the empty spaces in the warehouse
@@ -122,6 +154,8 @@ public class WarehouseManager {
         catch(IOException e) {
             System.out.println(WAREHOUSE_LOT_SPACES_FILENAME + " not found or could not be opened.");
         }
+        
+        Collections.sort(warehouse);
     }
     
     // populate the inventory
@@ -140,6 +174,8 @@ public class WarehouseManager {
         catch(IOException e) {
             System.out.println(ITEM_REQUIREMENTS_FILENAME + " not found or could not be opened.");
         }
+        
+        Collections.sort(inventory);
     }
     
     // iterate over the whole inventory and display the data associated with each item

@@ -1,7 +1,9 @@
+import java.util.Objects;
+
 /**
  * @author Trevor Hodde
  */
-public class InventoryItem {
+public class InventoryItem implements Comparable<InventoryItem> {
     private String itemName;
     private double width;
     private double length;
@@ -19,7 +21,15 @@ public class InventoryItem {
         this.length = length;
         this.maxStackSize = maxStackSize;
         this.inventoryCount = inventoryCount;
+        this.totalSquareFootage = inventoryCount * (length*width);
         currentStack = 0;
+    }
+    
+    public InventoryItem(String itemName, int maxStackSize, double width, double length, int inventoryCount, WarehouseSpace position) {
+        this(itemName, maxStackSize, width, length, inventoryCount);
+        //this.totalSquareFootage = inventoryCount * (length*width);
+        //currentStack = 0;
+        this.location = position;
     }
     
     /**
@@ -69,7 +79,7 @@ public class InventoryItem {
      */
     public double getTotalSquareFootage() {
         // based on the total number of units * each units size
-        totalSquareFootage = this.inventoryCount * (this.length*this.width);
+        this.totalSquareFootage = this.inventoryCount * (this.length*this.width);
         return totalSquareFootage;
     }
     
@@ -133,11 +143,45 @@ public class InventoryItem {
     @Override
     public String toString() {
         return "InventoryItem [" + (itemName != null ? "itemName=" + itemName + ", " : "") + "width=" + width + ", length=" + length
-                + ", inventoryCount=" + inventoryCount + ", " + (location != null ? "location=" + location : "") + "]";
+                + ", inventoryCount=" + inventoryCount + (location != null ? ", location=" + location : "") + "]";
     }
     
     public String prettyPrint() {
-        return (itemName != null ? itemName + ", " : "") + inventoryCount + ", " + (location != null ? location.getLocation() : "");
+        return (itemName != null ? itemName + ", " : "") + inventoryCount + (location != null ? ", " + location.getLocation() : "");
+    }
+    
+    // compare items by square footage to organize them
+    @Override
+    public int compareTo(InventoryItem other) {
+        if(this.totalSquareFootage > other.getTotalSquareFootage()) {
+            return -1;
+        }
+        else if(this.totalSquareFootage < other.getTotalSquareFootage()) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    // specific implementation used only for merging
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+
+        InventoryItem other = (InventoryItem) obj;
+        // returns true if two things are true:
+        //    1) the item names match
+        //    2) the item locations match
+        return Objects.equals(this.itemName, other.getItemName()) && Objects.equals(this.getLocation().getLocation(), other.getLocation().getLocation());
+    }
+
+    public InventoryItem merge(InventoryItem other) {
+        assert(this.equals(other));
+        return new InventoryItem(this.itemName, this.maxStackSize, this.width, this.length, this.inventoryCount + other.getInventoryCount(), this.location);
     }
     
 /*

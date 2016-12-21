@@ -1,7 +1,7 @@
 /**
  * @author Trevor Hodde
  */
-public class WarehouseSpace {
+public class WarehouseSpace implements Comparable<WarehouseSpace> {
     private boolean filled;
     private String location;
     private double width;
@@ -115,5 +115,19 @@ public class WarehouseSpace {
     @Override
     public String toString() {
         return "WarehouseSpace [" + (location != null ? "location=" + location + ", " : "") + "width=" + width + ", length=" + length + "]";
+    }
+
+    // compare spaces by square footage to organize them
+    @Override
+    public int compareTo(WarehouseSpace other) {
+        if(this.squareFootage > other.getSquareFootage()) {
+            return -1;
+        }
+        else if(this.squareFootage < other.getSquareFootage()) {
+            return 1;
+        }
+        else {
+            return 0;
+        }
     }
 }
