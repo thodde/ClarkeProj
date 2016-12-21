@@ -9,6 +9,7 @@ public class WarehouseSpace implements Comparable<WarehouseSpace> {
     private double squareFootage;
     private double remainingSpace;
     private double capacity;
+    private InventoryItem item;
 
     /**
      * @param filled
@@ -25,6 +26,7 @@ public class WarehouseSpace implements Comparable<WarehouseSpace> {
         this.length = length;
         this.squareFootage = length*width;
         this.remainingSpace = squareFootage;
+        this.item = null;
     }
     
     /**
@@ -39,6 +41,14 @@ public class WarehouseSpace implements Comparable<WarehouseSpace> {
      */
     public void setFilled(boolean filled) {
         this.filled = filled;
+    }
+    
+    public InventoryItem getItem() {
+        return this.item;
+    }
+    
+    public void setItem(InventoryItem item) {
+        this.item = item;
     }
     
     /**

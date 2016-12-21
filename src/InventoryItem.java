@@ -23,6 +23,7 @@ public class InventoryItem implements Comparable<InventoryItem> {
         this.inventoryCount = inventoryCount;
         this.totalSquareFootage = inventoryCount * (length*width);
         currentStack = 0;
+        this.location = null;
     }
     
     public InventoryItem(String itemName, int maxStackSize, double width, double length, int inventoryCount, WarehouseSpace position) {
@@ -153,14 +154,27 @@ public class InventoryItem implements Comparable<InventoryItem> {
     // compare items by square footage to organize them
     @Override
     public int compareTo(InventoryItem other) {
-        if(this.totalSquareFootage > other.getTotalSquareFootage()) {
+        double thisSingleSquareFootage = this.length * this.width;
+        double otherSingleSquareFootage = other.getLength() * other.getWidth();
+        
+        // we want to organize based on the individual size of each product
+        if(thisSingleSquareFootage > otherSingleSquareFootage) {
             return -1;
         }
-        else if(this.totalSquareFootage < other.getTotalSquareFootage()) {
+        else if(thisSingleSquareFootage < otherSingleSquareFootage) {
             return 1;
         }
         else {
-            return 0;
+            // however, if two products are the same size, take the one which has more inventory
+            if(this.totalSquareFootage > other.getTotalSquareFootage()) {
+                return -1;
+            }
+            else if(this.totalSquareFootage < other.getTotalSquareFootage()) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
         }
     }
 

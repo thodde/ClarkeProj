@@ -13,7 +13,8 @@ public class WarehouseManager {
     private ArrayList<InventoryItem> inventory = new ArrayList<InventoryItem>();
     private ArrayList<WarehouseSpace> warehouse = new ArrayList<WarehouseSpace>();
     
-    private final double MAX_CAPACITY = 0.75;
+    private final double MAX_CAPACITY = 0.70;
+    private final double MIN_CAPACITY = 0.50;
     
     // managing file IO
     private final String WAREHOUSE_LOT_SPACES_FILENAME = "Warehouse_Lot_Spaces.csv";
@@ -34,8 +35,9 @@ public class WarehouseManager {
             for(WarehouseSpace space : warehouse) {
                 if(!space.isFilled()) {
                     possiblyFull = false;
+                    
                     // if the item (total inventory) fits in the space
-                    if(item.getTotalSquareFootage() <= space.getSquareFootage()) {
+                    if(item.getTotalSquareFootage() <= space.getSquareFootage() ) {                        
                         // try to stack vertically
                         if(item.getCurrentStackSize() < item.getMaxStackSize()) {
                             for(int i = item.getCurrentStackSize(); i <= item.getMaxStackSize() && i <= item.getInventoryCount(); i++) {
@@ -60,12 +62,13 @@ public class WarehouseManager {
                             space.calcRemainingFootage(item.getTotalSquareFootage());
                         }
                         
-                        if(space.calcCapacity() >= MAX_CAPACITY) {
+                        //if(space.calcCapacity() >= MAX_CAPACITY) {
                             space.setFilled(true);
-                        }
+                        //}
                         
                         // the item has a home
                         item.setLocation(space);
+                        space.setItem(item);
                         // move to the next item
                         break;
                     }
@@ -87,14 +90,31 @@ public class WarehouseManager {
                         
                         // update the remaining space
                         space.calcRemainingFootage(item.getTotalSquareFootage());
-                        if(space.calcCapacity() >= MAX_CAPACITY) {
+                        //if(space.calcCapacity() >= MAX_CAPACITY) {
                             space.setFilled(true);
-                        }
+                        //}
                         // the item has a home
                         item.setLocation(space);
+                        space.setItem(item);
+                        break;
+                    }
+                }/*
+                else {
+                    // TODO:
+                    // figure out if the current item has more inventory to store 
+                    // than the item holding the spot
+                    if((item.getInventoryCount() > space.getItem().getInventoryCount())) {
+                        // the item that lives here no longer has a home
+                        space.getItem().setLocation(null);
+                        //space.setFilled(false);
+                        space.setItem(item);
+                        item.setLocation(space);
+                        // update the remaining space
+                        space.calcRemainingFootage(item.getTotalSquareFootage());
                         break;
                     }
                 }
+                */
             }
             if(possiblyFull)
                 break;
